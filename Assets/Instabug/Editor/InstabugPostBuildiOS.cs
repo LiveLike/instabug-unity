@@ -65,7 +65,7 @@ namespace Instabug.Internal.Editor.Postbuild {
         private static bool EmbeddedBinariesNotAdded(PBXProject project) {
             // TODO: Need a better way to do this
             string projectContents = project.WriteToString();
-            return projectContents.Contains(BuildPhaseName);
+            return !projectContents.Contains(BuildPhaseName);
         }
 
         private static void AddEmbeddedFrameworks(PBXProject project, string targetGuid) {
