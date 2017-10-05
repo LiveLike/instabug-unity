@@ -1,32 +1,17 @@
-﻿//#if !UNITY_EDITOR
+﻿#if UNITY_ANDROID && !UNITY_EDITOR
 
 using UnityEngine;
-using System;
 
 namespace Instabug
 {
-    class InstabugInit
+    public class InstabugInitAndroid
     {
-#if UNITY_IOS || UNITY_IPHONE
-
-        const string BetaToken = "<BETA_TOKEN>";
-        const string LiveToken = "<LIVE_TOKEN>";
-
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void InitializeInstabugiOS()
-        {
-            // TODO: Remove the event once app closes
-            Application.logMessageReceived += IOSLogger.Log;
-        }
-
-#elif UNITY_ANDROID
-
         const string BetaToken = "<BETA_TOKEN>";
         const string LiveToken = "<LIVE_TOKEN>";
 
         // TODO: All of this needs to go in an aar.
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void InitializeInstabugAndroid()
+        private static void Initialize()
         {
             // Implementation follows Instabug documentation:
             //   https://docs.instabug.com/docs/android-integration
@@ -63,8 +48,7 @@ namespace Instabug
 
             return applicationObject;
         }
-#endif
     }
 }
 
-//#endif // UNITY_EDITOR
+#endif
