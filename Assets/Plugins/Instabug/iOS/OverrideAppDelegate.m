@@ -13,13 +13,15 @@ IMPL_APP_CONTROLLER_SUBCLASS(OverrideAppDelegate)
 
 @implementation OverrideAppDelegate
 
-NSString *const InstabugBetaToken = @"<BetaToken>";
-NSString *const InstabugLiveToken = @"<LiveToken>";
+NSString *const InstabugBetaToken = @"<BETA_TOKEN>";
+NSString *const InstabugLiveToken = @"<LIVE_TOKEN>";
 
 -(BOOL)application:(UIApplication*) application didFinishLaunchingWithOptions:(NSDictionary*) options
 {
+#ifdef ENABLE_INSTABUG
     [self setupInstabug];
-
+#endif
+    
     return [super application:application didFinishLaunchingWithOptions:options];
 }
 

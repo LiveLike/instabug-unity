@@ -10,7 +10,7 @@ namespace Instabug.Internal.Editor.Postbuild {
 
     public class InstabugPostBuildiOS {
 
-        private const string InstabugPluginPath = "Plugins/iOS/Instabug";
+        private const string InstabugPluginPath = "Plugins/Instabug/iOS";
         private const string InstabugFrameworkName = "Instabug.framework";
         private const string BuildPhaseName = "Embed Instabug Framework";
 
@@ -42,11 +42,6 @@ namespace Instabug.Internal.Editor.Postbuild {
         private static void PrepareProject(string buildPath) {
             string projPath = PBXProject.GetPBXProjectPath(buildPath);
 
-            AddEmbeddedBinaries(projPath);
-            AddRunScriptBuildPhase(projPath);
-        }
-
-        private static void AddEmbeddedBinaries(string projPath) {
             PBXProject project = new PBXProject();
             project.ReadFromFile(projPath);
 
@@ -57,9 +52,14 @@ namespace Instabug.Internal.Editor.Postbuild {
                 AddEmbeddedFrameworks(project, targetGuid);
                 AddCodeSignOnCopy(project, BuildPhaseName);
                 AddSearchPaths(project, targetGuid);
-
-                File.WriteAllText(projPath, project.WriteToString());
             }
+
+            AddPreprocessorDefinitions(project, targetGuid);
+            AddOverridePCH(project, targetGuid);
+
+            File.WriteAllText(projPath, project.WriteToString());
+
+            AddRunScriptBuildPhase(projPath);
         }
 
         private static bool EmbeddedBinariesNotAdded(PBXProject project) {
@@ -100,6 +100,15 @@ namespace Instabug.Internal.Editor.Postbuild {
         private static void AddSearchPaths(PBXProject project, string targetGuid) {
             project.AddBuildProperty(targetGuid, "FRAMEWORK_SEARCH_PATHS", "$(SRCROOT)/Frameworks/" + InstabugPluginPath);
             project.AddBuildProperty(targetGuid, "LD_RUNPATH_SEARCH_PATHS", "$(inherited) @executable_path/Frameworks");
+        }
+
+        private static void AddPreprocessorDefinitions(PBXProject project, string targetGuid) {
+            string configGuid = project.BuildConfigByName(targetGuid, "Debug");
+            project.AddBuildPropertyForConfig(configGuid, "GCC_PREPROCESSOR_DEFINITIONS", "ENABLE_INSTABUG");
+        }
+
+        private static void AddOverridePCH(PBXProject project, string targetGuid) {
+            project.SetBuildProperty(targetGuid, "GCC_PREFIX_HEADER", "Libraries/" + InstabugPluginPath + "/prefix.h");
         }
 
         private static void AddRunScriptBuildPhase(string projPath) {
