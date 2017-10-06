@@ -1,4 +1,4 @@
-﻿#if UNITY_IPHONE
+﻿#if (UNITY_IOS || UNITY_IPHONE) && !UNITY_EDITOR
 
 using UnityEngine;
 using System.Runtime.InteropServices;
@@ -9,9 +9,7 @@ public class IOSLogger {
     private static extern void logToiOS(string debugMessage);
 
     public static void Log(string logString, string stackTrace, LogType type) {
-        if (Application.platform == RuntimePlatform.IPhonePlayer) {
-            logToiOS(logString + "\n===============\n" + stackTrace);
-        }
+        logToiOS(logString + "\n===============\n" + stackTrace);
     }
 }
 
